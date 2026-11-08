@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exoplanet Explorer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Exoplanet Explorer</h1>
+        <p>Discover planets beyond our Solar System.</p>
+        <nav aria-label="Main navigation">
+            <a href="#catalogue">Planet catalogue</a>
+            <a href="#chart-section">Compare planets</a>
+            <a href="#methods">Discovery methods</a>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h2>What is an exoplanet?</h2>
+            <p>An exoplanet is a planet outside our Solar System. These distant worlds help astronomers understand how planetary systems form and evolve.</p>
+        </section>
+        <section id="catalogue">
+            <h2>Planet catalogue</h2>
+            <p>Explore a small sample of confirmed planets requested live from NASA.</p>
+            <form id="filter-form" action="{{ url_for('index') }}#catalogue" method="get">
+                <div>
+                    <label for="method">Discovery method</label>
+                    <select id="method" name="method">
+                        <option value="">All methods</option>
+                        {% for method in methods %}
+                        <option value="{{ method }}" {% if selected_method == method %}selected{% endif %}>{{ method }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label for="max-radius">Maximum radius (Earth radii)</label>
+                    <input type="number" id="max-radius" name="max_radius" min="0.1" step="0.1" placeholder="e.g. 2" value="{{ max_radius }}">
+                </div>
+                <div class="form-actions">
+                    <button type="submit">Filter planets</button>
+                    <a class="reset-link" href="{{ url_for('index') }}#catalogue">Clear filters</a>
+                </div>
+            </form>
+            <p id="status" role="status">{% if error %}{{ error }}{% else %}Showing {{ planets|length }} of {{ total }} planets.{% endif %}</p>
+            <div class="table-container" role="region" aria-label="Planet catalogue table" tabindex="0">
+                <table>
+                    <caption>Radius is measured relative to Earth; orbital period is measured in days.</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Planet</th>
+                            <th scope="col">Discovery year</th>
+                            <th scope="col">Discovery method</th>
+                            <th scope="col">Radius (Earth radii)</th>
+                            <th scope="col">Orbital period (days)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="planet-rows">
+                        {% for planet in planets %}
+                        <tr>
+                            <th scope="row">{{ planet.name }}</th>
+                            <td>{{ planet.year }}</td>
+                            <td>{{ planet.method }}</td>
+                            <td>{{ '%.2f'|format(planet.radius) }}</td>
+                            <td>{{ '%.2f'|format(planet.period) }}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="5">{% if error %}{{ error }}{% else %}No planets to display. Try changing the filters.{% endif %}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section id="chart-section">
+            <h2>Radius and orbital period</h2>
+            <p>Each dot represents a planet in the filtered catalogue. Axes expand if new measurements exceed their current range.</p>
+            <svg id="planet-chart" viewBox="0 0 800 340" role="img" aria-labelledby="chart-title chart-description"
+                 data-max-period="{{ chart_max_period }}" data-max-radius="{{ chart_max_radius }}">
+                <title id="chart-title">Planet radius versus orbital period</title>
+                <desc id="chart-description">Linear axes: orbital period in days horizontally, planet radius in Earth radii vertically. The table above provides the same measurements.</desc>
+                <line x1="70" y1="260" x2="750" y2="260" class="axis" />
+                <line x1="70" y1="260" x2="70" y2="30" class="axis" />
+                <text x="70" y="285" text-anchor="middle">0</text>
+                <text id="chart-max-period" x="750" y="285" text-anchor="middle">{{ chart_max_period }}</text>
+                <text x="55" y="265" text-anchor="end">0</text>
+                <text id="chart-max-radius" x="55" y="45" text-anchor="end">{{ chart_max_radius }}</text>
+                <text x="410" y="320" text-anchor="middle">Orbital period (days)</text>
+                <text transform="translate(20 150) rotate(-90)" text-anchor="middle">Radius (Earth radii)</text>
+                <g id="chart-points">
+                    {% for planet in planets %}
+                    <circle cx="{{ 70 + planet.period / chart_max_period * 680 }}"
+                            cy="{{ 260 - planet.radius / chart_max_radius * 220 }}" r="5">
+                        <title>{{ planet.name }}: {{ planet.period }} days, {{ planet.radius }} Earth radii</title>
+                    </circle>
+                    {% endfor %}
+                </g>
+            </svg>
+        </section>
+        <section id="methods">
+            <h2>How do we find exoplanets?</h2>
+            <dl>
+                <dt>Transit</dt>
+                <dd>A planet passing in front of its star causes a small dip in the light we observe.</dd>
+                <dt>Radial velocity</dt>
+                <dd>A planet's gravity makes its star wobble. Astronomers detect this motion through shifts in the star's spectrum.</dd>
+            </dl>
+        </section>
+    </main>
+    <footer>
+        <p>Source: <a href="https://exoplanetarchive.ipac.caltech.edu/">NASA Exoplanet Archive</a>, Planetary Systems Composite Parameters table. This is a small teaching sample, not a representative survey. Some radii in this table are estimated.</p>
+    </footer>
+</body>
+</html>

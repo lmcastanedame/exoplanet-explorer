@@ -1,0 +1,229 @@
+/* Include padding and borders in element widths. */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #203047;
+    background-color: #f1f5f9;
+}
+
+header {
+    padding: 3rem 1.5rem;
+    color: #ffffff;
+    background-color: #14253f;
+    text-align: center;
+}
+
+h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    line-height: 1.2;
+}
+
+h2 {
+    margin-top: 0;
+    line-height: 1.3;
+}
+
+a {
+    color: #175ca4;
+    text-underline-offset: 0.2em;
+}
+
+a:hover {
+    text-decoration-thickness: 2px;
+}
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem 1.5rem;
+    margin-top: 1.5rem;
+}
+
+nav a {
+    color: #b9e6ff;
+}
+
+main,
+footer {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 1.5rem;
+}
+
+section {
+    margin-bottom: 1.5rem;
+    padding: 2rem;
+    border: 1px solid #d7e0ea;
+    border-radius: 0.5rem;
+    background-color: #ffffff;
+}
+
+/* The filter fields share a row on wider screens. */
+form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    padding: 1.25rem;
+    background-color: #f1f5f9;
+    border-radius: 0.5rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+input,
+select,
+button {
+    padding: 0.65rem;
+    border: 1px solid #7b8da3;
+    border-radius: 0.25rem;
+    font: inherit;
+}
+
+input,
+select {
+    width: 100%;
+    min-width: 0;
+    color: inherit;
+    background-color: #ffffff;
+}
+
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    grid-column: 1 / -1;
+}
+
+button {
+    color: #ffffff;
+    background-color: #175ca4;
+    cursor: pointer;
+}
+
+button[type="reset"] {
+    color: #203047;
+    background-color: #ffffff;
+}
+
+button:disabled {
+    color: #475569;
+    background-color: #dce3eb;
+    cursor: not-allowed;
+}
+
+#filter-note {
+    grid-column: 1 / -1;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+:focus-visible {
+    outline: 3px solid #bd5a00;
+    outline-offset: 3px;
+}
+
+/* Scroll the table if it cannot fit on a small screen. */
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+caption {
+    margin-bottom: 0.75rem;
+    text-align: left;
+}
+
+th,
+td {
+    padding: 0.85rem;
+    border-bottom: 1px solid #d7e0ea;
+}
+
+thead {
+    background-color: #e8eef6;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f8fafc;
+}
+
+dt {
+    margin-top: 1rem;
+    font-weight: bold;
+}
+
+dd {
+    margin: 0.25rem 0 0;
+}
+
+footer {
+    padding-top: 0;
+    font-size: 0.9rem;
+}
+
+/* Stack fields and reduce spacing on narrow screens. */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    main,
+    footer {
+        padding-right: 1rem;
+        padding-left: 1rem;
+    }
+
+    section {
+        padding: 1.25rem;
+    }
+
+    form {
+        grid-template-columns: 1fr;
+    }
+}
+
+.reset-link {
+    align-self: center;
+}
+
+#planet-chart {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-width: 0;
+    background-color: #f8fafc;
+}
+
+.axis {
+    stroke: #475569;
+    stroke-width: 2;
+}
+
+#planet-chart text {
+    fill: #203047;
+    font-size: 16px;
+}
+
+#chart-points circle {
+    fill: #175ca4;
+    fill-opacity: 0.75;
+    stroke: #ffffff;
+}
