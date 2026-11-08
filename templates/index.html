@@ -41,7 +41,7 @@
                 </div>
                 <div class="form-actions">
                     <button type="submit">Filter planets</button>
-                    <a class="reset-link" href="{{ url_for('index') }}#catalogue">Clear filters</a>
+                    <a class="reset-link" href="{{ url_for('index') }}">Clear filters</a>
                 </div>
             </form>
             <p id="status" role="status">{% if error %}{{ error }}{% else %}Showing {{ planets|length }} of {{ total }} planets.{% endif %}</p>

@@ -5,6 +5,15 @@ const chart = document.querySelector("#planet-chart");
 const points = document.querySelector("#chart-points");
 const submitButton = form.querySelector("button[type='submit']");
 const svgNamespace = "http://www.w3.org/2000/svg";
+let activeRequest = null;
+
+document.querySelector(".reset-link").addEventListener("click", (event) => {
+    event.preventDefault();
+    // Clear explicitly: form.reset() would restore server-rendered filter values.
+    form.elements.method.value = "";
+    form.elements.max_radius.value = "";
+    form.requestSubmit();
+});
 
 function updateTable(planets) {
     rows.replaceChildren();
@@ -51,19 +60,28 @@ function updateChart(planets) {
 
 form.addEventListener("submit", async (event) => {
     event.preventDefault();
+    // A reset or another submission replaces any request still in progress.
+    if (activeRequest) activeRequest.abort();
+    const controller = new AbortController();
+    activeRequest = controller;
     const parameters = new URLSearchParams(new FormData(form));
     submitButton.disabled = true;
     statusMessage.textContent = "Loading planets…";
     try {
-        const response = await fetch(`/api/planets?${parameters}`);
+        const response = await fetch(`/api/planets?${parameters}`, { signal: controller.signal });
         const data = await response.json();
+        if (controller.signal.aborted) return;
         if (!response.ok) throw new Error(data.error || "Could not load planets.");
         updateTable(data);
         updateChart(data);
         statusMessage.textContent = `Showing ${data.length} planets.`;
     } catch (error) {
+        if (controller.signal.aborted) return;
         statusMessage.textContent = `${error.message} Previous results are still shown. Try again.`;
     } finally {
-        submitButton.disabled = false;
+        if (activeRequest === controller) {
+            submitButton.disabled = false;
+            activeRequest = null;
+        }
     }
 });
